@@ -38,11 +38,12 @@ update msg model inputManager =
     case msg of
         Tick deltaTime ->
             updateModel deltaTime inputManager model ! []
-            
+
 updateModel : Time -> InputManager.Model -> Model -> Model
 updateModel deltaTime inputManager model =
     updateSpeedX deltaTime inputManager model |>
-    updatePosX deltaTime
+    updatePosX deltaTime |>
+    updatePosY inputManager
 
 updateSpeedX : Time -> InputManager.Model -> Model -> Model
 updateSpeedX deltaTime inputManager model =
@@ -63,3 +64,9 @@ updatePosX : Time -> Model -> Model
 updatePosX deltaTime model =
     { model | posX = model.posX + model.speedX * (inSeconds deltaTime) }
 
+updatePosY : InputManager.Model -> Model -> Model
+updatePosY inputManager model =
+  if inputManager.up then
+    { model | posY = model.posY + 1 }
+  else
+    model

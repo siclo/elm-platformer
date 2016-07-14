@@ -4,12 +4,14 @@ import Keyboard exposing (..)
 type alias Model =
     { left : Bool
     , right : Bool
+    , up : Bool
     }
 
 model : Model
 model =
     { left = False
     , right = False
+    , up = False
     }
 
 type Msg
@@ -42,6 +44,7 @@ getFieldSetterFromKeyCode : KeyCode -> Maybe (Bool -> Model -> Model)
 getFieldSetterFromKeyCode keyCode =
     case keyCode of
         37 -> Just (\newValue model -> { model | left = newValue })
+        38 -> Just (\newValue model -> { model | up = newValue })
         39 -> Just (\newValue model -> { model | right = newValue })
         otherwise ->
             Nothing
