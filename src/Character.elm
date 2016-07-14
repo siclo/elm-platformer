@@ -4,7 +4,7 @@ import Color exposing (..)
 import Time exposing (Time, inSeconds)
 import InputManager
 
-gravity = 100
+gravity = 400
 
 type alias Model =
     { posX : Float
@@ -26,7 +26,7 @@ model =
     , accelerationX = 300
     , stoppingDecelerationX = 400
     , speedY = 0
-    , jumpSpeed = 200
+    , jumpSpeed = 300
     }
 
 characterModel = rect 10 30 |> filled orange
