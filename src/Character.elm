@@ -6,6 +6,7 @@ import Time exposing (Time, inSeconds)
 import InputManager
 
 
+gravity : Float
 gravity =
     400
 
@@ -37,6 +38,7 @@ model =
     }
 
 
+characterModel : Form
 characterModel =
     rect 10 30 |> filled orange
 

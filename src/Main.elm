@@ -31,6 +31,7 @@ model =
     }
 
 
+init : ( Model, Cmd a )
 init =
     ( model, Cmd.none )
 
@@ -78,6 +79,7 @@ view model =
     toHtml (collage model.worldSize.x model.worldSize.y [ character model.character ])
 
 
+main : Program Never
 main =
     program
         { init = init
