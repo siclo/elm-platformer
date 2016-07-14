@@ -1,3 +1,5 @@
+module Main exposing (..)
+
 import Html.App exposing (program)
 import Html
 import Collage exposing (collage)
@@ -7,6 +9,7 @@ import InputManager
 import AnimationFrame
 import Time exposing (Time)
 
+
 type alias Model =
     { worldSize :
         { x : Int
@@ -15,6 +18,7 @@ type alias Model =
     , character : Character.Model
     , inputManager : InputManager.Model
     }
+
 
 model : Model
 model =
@@ -26,7 +30,10 @@ model =
     , inputManager = InputManager.model
     }
 
-init = (model, Cmd.none)
+
+init =
+    ( model, Cmd.none )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -35,38 +42,46 @@ subscriptions model =
         , AnimationFrame.diffs Tick
         ]
 
+
 type Msg
     = InputManagerMsg InputManager.Msg
     | Tick Time
 
-update : Msg -> Model -> (Model, Cmd Msg)
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         InputManagerMsg subMsg ->
-            let (updatedInputManagerModel, inputManagerCmd) =
-                InputManager.update subMsg model.inputManager
+            let
+                ( updatedInputManagerModel, inputManagerCmd ) =
+                    InputManager.update subMsg model.inputManager
             in
                 ( { model | inputManager = updatedInputManagerModel }
                 , Cmd.map InputManagerMsg inputManagerCmd
                 )
+
         Tick deltaTime ->
             tickCharacter deltaTime model
 
-tickCharacter : Time -> Model -> (Model, Cmd Msg)
+
+tickCharacter : Time -> Model -> ( Model, Cmd Msg )
 tickCharacter deltaTime model =
-    let (updatedCharacterModel, characterCmd) =
-        Character.update (Character.Tick deltaTime) model.character model.inputManager
+    let
+        ( updatedCharacterModel, characterCmd ) =
+            Character.update (Character.Tick deltaTime) model.character model.inputManager
     in
-       { model | character = updatedCharacterModel } ! []
+        { model | character = updatedCharacterModel } ! []
+
 
 view : Model -> Html.Html Msg
-view model = toHtml (collage model.worldSize.x model.worldSize.y [character model.character])
+view model =
+    toHtml (collage model.worldSize.x model.worldSize.y [ character model.character ])
 
-main = 
+
+main =
     program
-       { init = init
-       , subscriptions = subscriptions
-       , update = update
-       , view = view
-       }
-
+        { init = init
+        , subscriptions = subscriptions
+        , update = update
+        , view = view
+        }
