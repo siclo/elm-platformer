@@ -4,6 +4,8 @@ import Color exposing (..)
 import Time exposing (Time, inSeconds)
 import InputManager
 
+gravity = 100
+
 type alias Model =
     { posX : Float
     , posY : Float
@@ -11,6 +13,8 @@ type alias Model =
     , topSpeedX : Float
     , accelerationX : Float
     , stoppingDecelerationX : Float
+    , speedY : Float
+    , jumpSpeed : Float
     }
 
 model : Model
@@ -21,6 +25,8 @@ model =
     , topSpeedX = 150
     , accelerationX = 300
     , stoppingDecelerationX = 400
+    , speedY = 0
+    , jumpSpeed = 200
     }
 
 characterModel = rect 10 30 |> filled orange
@@ -43,7 +49,10 @@ updateModel : Time -> InputManager.Model -> Model -> Model
 updateModel deltaTime inputManager model =
     updateSpeedX deltaTime inputManager model |>
     updatePosX deltaTime |>
-    updatePosY inputManager
+    jumpIfValid inputManager |>
+    applyGravity deltaTime |>
+    updatePosY deltaTime |>
+    clampOnFloor
 
 updateSpeedX : Time -> InputManager.Model -> Model -> Model
 updateSpeedX deltaTime inputManager model =
@@ -64,9 +73,29 @@ updatePosX : Time -> Model -> Model
 updatePosX deltaTime model =
     { model | posX = model.posX + model.speedX * (inSeconds deltaTime) }
 
-updatePosY : InputManager.Model -> Model -> Model
-updatePosY inputManager model =
-  if inputManager.up then
-    { model | posY = model.posY + 1 }
+jumpIfValid : InputManager.Model -> Model -> Model
+jumpIfValid inputManager model =
+  if canJump inputManager model then
+    { model | speedY = model.jumpSpeed }
   else
     model
+
+canJump : InputManager.Model -> Model -> Bool
+canJump inputManager model =
+  inputManager.up && isOnFloor model
+
+isOnFloor : Model -> Bool
+isOnFloor model =
+  model.posY == 0
+
+applyGravity : Time -> Model -> Model
+applyGravity deltaTime model =
+  { model | speedY = model.speedY - gravity * inSeconds deltaTime }
+
+updatePosY : Time -> Model -> Model
+updatePosY deltaTime model =
+  { model | posY = model.posY + model.speedY * inSeconds deltaTime }
+
+clampOnFloor : Model -> Model
+clampOnFloor model =
+  { model | posY = max model.posY 0 }
